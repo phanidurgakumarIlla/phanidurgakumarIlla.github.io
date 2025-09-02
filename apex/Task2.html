@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Webpage</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #66e5ea;
+            color: #333;
+            line-height: 1.6; /* Improved default line height for readability */
+        }
+
+        /* --- Layout & Navigation --- */
+        .container {
+            max-width: 1200px; /* Increased max-width for larger screens */
+            margin: 0 auto; /* Center the whole page */
+        }
+
+        nav {
+            background-color: #0b1de2;
+            color: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            display: flex;
+            flex-wrap: wrap; /* Make navigation wrap on small screens */
+            justify-content: space-between; /* Space out items */
+            align-items: center; /* Vertically center items */
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap; /* Allow nav items to wrap */
+            gap: 15px;
+            justify-content: center; /* Center nav items on small screens */
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px; /* Add padding to links */
+            border-radius: 4px; /* Give links some rounded corners */
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* Slight background change on hover */
+        }
+
+        /* --- Main Content Area --- */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 992px) {
+            .main-content {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .content-section {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Form Styles --- */
+        .contact-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555; /* Darker label color */
+        }
+
+        .contact-form input[type="text"],
+        .contact-form input[type="email"] {
+            width: calc(100% - 16px); /* Adjusted width for padding and border */
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd; /* Lighter border */
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease; /* Smooth transition */
+            font-size: 1em; /* Ensure input text is readable */
+        }
+
+        .contact-form input[type="text"]:focus,
+        .contact-form input[type="email"]:focus {
+            border-color: #007bff; /* Highlight on focus */
+            outline: none; /* Remove default outline */
+        }
+
+
+        .contact-form button[type="submit"] {
+            background-color: #ff0000;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+            width: 100%; /* Make button full-width on small screens */
+        }
+
+        .contact-form button[type="submit"]:hover {
+            background-color: #c82333;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        /* --- To Do List Styles --- */
+        .todo-input-container {
+            display: flex;
+            margin-bottom: 15px;
+            flex-direction: column; /* Stack input and button on small screens */
+            align-items: stretch; /* Stretch items to container width */
+        }
+
+        #new-task {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px 4px 0 0; /* Top rounded corners */
+            box-sizing: border-box;
+            font-size: 1em;
+            margin-bottom: 0; /* Remove default margin-bottom */
+        }
+
+        #add-task {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 0 0 4px 4px; /* Bottom rounded corners */
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+            width: 100%; /* Make button full-width on small screens */
+        }
+        #new-task {
+             border-radius: 4px 4px 0 0;
+        }
+
+        #add-task {
+            border-radius: 0 0 4px 4px;
+        }
+
+        #add-task:hover {
+            background-color: #1e7e34;
+        }
+
+        #tasks {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        #tasks li {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 4px; /* Add border radius to list items */
+            background-color: #f9f9f9; /* Slight background color for list items */
+            margin-bottom: 5px; /* Add a little margin between items */
+        }
+
+        #tasks li:last-child {
+            border-bottom: none;
+        }
+
+        .remove-task {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+
+        .remove-task:hover {
+            background-color: #c82333;
+        }
+
+        /* --- Responsive Adjustments --- */
+        @media (min-width: 768px) {
+            .todo-input-container {
+                flex-direction: row; /* Restore side-by-side layout on medium screens and up */
+                align-items: center; /* Vertically align items in the container */
+            }
+            #new-task {
+                border-radius: 4px 0 0 4px; /* Restore original rounded corners */
+                margin-bottom: 0; /* */
+            }
+            #add-task {
+                border-radius: 0 4px 4px 0; /* Restore original rounded corners */
+            }
+            .contact-form button[type="submit"] {
+                width: auto; 
+            }
+             nav ul {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+
+        <div class="main-content">
+            <div class="content-section">
+                <h2>Contact Us</h2>
+                <form id="contactForm" class="contact-form">
+                    <div>
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" required>
+                        <div class="error-message" id="nameError"></div>
+                    </div>
+                    <div>
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="error-message" id="emailError"></div>
+                    </div>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+
+            <div class="content-section">
+                <h2>To Do List</h2>
+                <div class="todo-list">
+                    <div class="todo-input-container">
+                        <input type="text" id="new-task" placeholder="Add new task">
+                        <button id="add-task">Add</button>
+                    </div>
+                    <ul id="tasks">
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h3>Another Content Section</h3>
+                <p>This is another section demonstrating CSS Grid layout for content organization.</p>
+            </div>
+
+            <div class="content-section">
+                <h3>Yet Another Section</h3>
+                <p>More content here to showcase the responsiveness of the grid layout.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for Form Validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const contactForm = document.getElementById('contactForm');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const nameError = document.getElementById('nameError');
+            const emailError = document.getElementById('emailError');
+
+            contactForm.addEventListener('submit', function(event) {
+                let isValid = true;
+
+                if (nameInput.value.trim() === '') {
+                    nameError.textContent = 'Name is required';
+                    isValid = false;
+                } else {
+                    nameError.textContent = '';
+                }
+
+                if (emailInput.value.trim() === '') {
+                    emailError.textContent = 'Email is required';
+                    isValid = false;
+                } else if (!isValidEmail(emailInput.value.trim())) {
+                    emailError.textContent = 'Invalid email format';
+                    isValid = false;
+                } else {
+                    emailError.textContent = '';
+                }
+
+                if (!isValid) {
+                    event.preventDefault(); // Prevent form submission if validation fails
+                } else {
+                    alert('Form submitted successfully!'); // Replace with your actual submission logic
+                }
+            });
+
+            function isValidEmail(email) {
+                // Basic email validation regex
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+        });
+
+        // JavaScript for To Do List
+        document.addEventListener('DOMContentLoaded', function() {
+            const newTaskInput = document.getElementById('new-task');
+            const addTaskButton = document.getElementById('add-task');
+            const tasksList = document.getElementById('tasks');
+
+            addTaskButton.addEventListener('click', function() {
+                const taskText = newTaskInput.value.trim();
+                if (taskText !== '') {
+                    addTaskToList(taskText);
+                    newTaskInput.value = ''; // Clear the input field
+                }
+            });
+
+            newTaskInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    addTaskButton.click(); // Simulate button click on Enter key
+                }
+            });
+
+            function addTaskToList(task) {
+                const listItem = document.createElement('li');
+                listItem.textContent = task;
+
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.classList.add('remove-task');
+                removeButton.addEventListener('click', function() {
+                    listItem.remove(); // Remove the task item
+                });
+
+                listItem.appendChild(removeButton);
+                tasksList.appendChild(listItem);
+            }
+        });
+    </script>
+</body>
+</html>
