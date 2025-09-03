@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Product Catalog</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+            color: #222;
+        }
+        header {
+            background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%);
+            color: #fff;
+            padding: 1.5rem 0 1rem 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px #0001;
+        }
+        header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 0;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: color 0.2s;
+        }
+        nav a:hover {
+            color: #ffe066;
+        }
+        main {
+            max-width: 1200px;
+            margin: 40px auto 0 auto;
+            padding: 0 16px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 28px;
+            font-size: 2rem;
+            color: #6366f1;
+        }
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+        .filter-bar select, .filter-bar input {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            font-size: 1em;
+            background: #fff;
+            transition: border 0.2s;
+        }
+        .filter-bar select:focus, .filter-bar input:focus {
+            border: 1.5px solid #6366f1;
+            outline: none;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 28px;
+        }
+        .product-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px #6366f133;
+            padding: 18px 16px 20px 16px;
+            text-align: center;
+            transition: transform 0.18s, box-shadow 0.18s;
+            position: relative;
+            overflow: hidden;
+        }
+        .product-card:hover {
+            transform: translateY(-8px) scale(1.025);
+            box-shadow: 0 8px 32px #6366f155;
+        }
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px #06b6d433;
+            background: #f1f5f9;
+        }
+        .product-card h3 {
+            margin: 10px 0 6px 0;
+            font-size: 1.18em;
+            color: #0ea5e9;
+        }
+        .product-card p {
+            color: #64748b;
+            font-size: 0.98em;
+            margin-bottom: 14px;
+            min-height: 40px;
+        }
+        .product-card .price {
+            font-size: 1.25em;
+            color: #f59e42;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .product-card button {
+            background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%);
+            color: #fff;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            box-shadow: 0 2px 8px #6366f122;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .product-card button:hover {
+            background: linear-gradient(90deg, #06b6d4 0%, #6366f1 100%);
+            transform: scale(1.07);
+        }
+        .cart-msg {
+            color: #22c55e;
+            text-align: center;
+            font-weight: 600;
+            margin: 10px 0 18px 0;
+            display: none;
+            font-size: 1.08em;
+        }
+        footer {
+            text-align: center;
+            padding: 22px;
+            background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%);
+            color: #fff;
+            margin-top: 50px;
+            font-size: 1em;
+            letter-spacing: 1px;
+        }
+        @media (max-width: 700px) {
+            .product-grid { grid-template-columns: 1fr; }
+            main { padding: 0 6px; }
+        }
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>New Products Catalog</h1>
+    <nav>
+        <ul>
+            <li><a href="#products">Products</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+</header>
+<main>
+    <section id="products">
+        <h2>Our Products</h2>
+        <div class="filter-bar">
+            <input type="text" id="search-input" placeholder="Search products...">
+            <select id="category-filter">
+                <option value="">All Categories</option>
+            </select>
+            <select id="sort-filter">
+                <option value="default">Sort By</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="name-asc">Name: A-Z</option>
+            </select>
+        </div>
+        <div class="cart-msg" id="cart-msg"></div>
+        <div id="product-list" class="product-grid"></div>
+    </section>
+    <section id="about" style="margin-top:50px;">
+        <h2>About Us</h2>
+        <p style="max-width:700px;margin:0 auto;text-align:center;">
+            Welcome to our New Products catalog! We offer the best tech and lifestyle products, with a focus on performance, design, and a seamless experience across all devices and browsers.
+        </p>
+    </section>
+    <section id="contact" style="margin-top:50px;">
+        <h2>Contact</h2>
+        <form id="contact-form" style="max-width:400px;margin:0 auto;">
+            <input type="text" placeholder="Your Name" required style="width:100%;padding:10px;margin-bottom:10px;border-radius:6px;border:1px solid #cbd5e1;">
+            <input type="email" placeholder="Your Email" required style="width:100%;padding:10px;margin-bottom:10px;border-radius:6px;border:1px solid #cbd5e1;">
+            <textarea placeholder="Your Message" required style="width:100%;padding:10px;margin-bottom:10px;border-radius:6px;border:1px solid #cbd5e1;"></textarea>
+            <button type="submit" style="width:100%;background:linear-gradient(90deg,#6366f1 0%,#06b6d4 100%);color:#fff;padding:12px;border:none;border-radius:6px;font-size:1em;font-weight:600;">Send</button>
+            <div id="contact-success" style="color:#22c55e;margin-top:10px;display:none;">Thank you! We'll get back to you soon.</div>
+        </form>
+    </section>
+</main>
+<footer>
+    &copy; 2025 New Products Catalog. All rights reserved.
+</footer>
+<script>
+const products=[
+    {id:1,name:"Stylish Headphones",category:"Electronics",description:"Immersive sound and comfort.",price:99.99,imageUrl:"hp.jpg"},
+    {id:2,name:"Smartwatch Pro",category:"Electronics",description:"Track fitness and stay connected.",price:199.99,imageUrl:"sw.jpg"},
+    {id:3,name:"Bluetooth Speaker",category:"Audio",description:"Powerful sound, compact design.",price:79.99,imageUrl:"bt.webp"},
+    {id:4,name:"Ergonomic Mouse",category:"Accessories",description:"Comfort and precision for work.",price:49.99,imageUrl:"mo.webp"},
+    {id:5,name:"Wireless Keyboard",category:"Accessories",description:"Type with comfort and freedom.",price:69.99,imageUrl:"kb.webp"},
+    {id:6,name:"HD Webcam",category:"Electronics",description:"Crystal clear video calls.",price:59.99,imageUrl:"wc.jpg"},
+    {id:7,name:"Desk Lamp",category:"Home",description:"Brighten your workspace.",price:29.99,imageUrl:"dl.jpg"},
+    {id:8,name:"Coffee Mug",category:"Home",description:"Start your day right.",price:12.99,imageUrl:"coo.webp"}
+    
+];
+const productListDiv=document.getElementById('product-list');
+const categoryFilter=document.getElementById('category-filter');
+const sortFilter=document.getElementById('sort-filter');
+const searchInput=document.getElementById('search-input');
+const cartMsg=document.getElementById('cart-msg');
+
+// Populate category filter
+(function(){
+    const cats=[...new Set(products.map(p=>p.category))];
+    cats.forEach(cat=>{
+        const opt=document.createElement('option');
+        opt.value=cat;opt.textContent=cat;
+        categoryFilter.appendChild(opt);
+    });
+})();
+
+function renderProducts(){
+    let filtered=[...products];
+    const cat=categoryFilter.value;
+    const search=searchInput.value.trim().toLowerCase();
+    if(cat)filtered=filtered.filter(p=>p.category===cat);
+    if(search)filtered=filtered.filter(p=>p.name.toLowerCase().includes(search)||p.description.toLowerCase().includes(search));
+    switch(sortFilter.value){
+        case "price-asc":filtered.sort((a,b)=>a.price-b.price);break;
+        case "price-desc":filtered.sort((a,b)=>b.price-a.price);break;
+        case "name-asc":filtered.sort((a,b)=>a.name.localeCompare(b.name));break;
+    }
+    productListDiv.innerHTML='';
+    if(filtered.length===0){
+        productListDiv.innerHTML='<p>No products found.</p>';return;
+    }
+    filtered.forEach(product=>{
+        const card=document.createElement('div');
+        card.className='product-card';
+        card.innerHTML=`
+            <img src="${product.imageUrl}" alt="${product.name}" loading="lazy">
+            <h3>${product.name}</h3>
+            <p>${product.description}</p>
+            <div class="price">$${product.price.toFixed(2)}</div>
+            <button onclick="addToCart(${product.id})">Add to Cart</button>
+        `;
+        productListDiv.appendChild(card);
+    });
+}
+categoryFilter.onchange=renderProducts;
+sortFilter.onchange=renderProducts;
+searchInput.oninput=renderProducts;
+renderProducts();
+
+window.addToCart=function(id){
+    const product=products.find(p=>p.id===id);
+    cartMsg.textContent=`${product.name} added to cart! (Demo only)`;
+    cartMsg.style.display="block";
+    setTimeout(()=>{cartMsg.style.display="none";},1700);
+};
+
+// Contact form fake submit
+document.getElementById('contact-form').onsubmit=function(e){
+    e.preventDefault();
+    document.getElementById('contact-success').style.display='block';
+    setTimeout(()=>{
+        document.getElementById('contact-success').style.display='none';
+        this.reset();
+    },2000);
+};
+</script>
+</body>
+</html>
