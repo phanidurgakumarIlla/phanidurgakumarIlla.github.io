@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whac-A-Mole (Faster)</title>
+    
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            width: 300px;
+            margin: 20px auto;
+            padding: 10px;
+            border: 2px solid #333;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+
+        .game-container {
+            width: 450px;
+            height: 450px;
+            margin: 20px auto;
+            display: grid;
+            /* Creates a 3x3 grid for the holes */
+            grid-template-columns: repeat(3, 1fr); 
+            grid-gap: 10px;
+            background-color: #55443d; /* Ground color */
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .hole {
+            overflow: hidden; /* Important! Hides the mole when it's 'down' */
+            background-color: #a0522d; /* Hole color */
+            border-radius: 50%; /* Makes the holes circular */
+            position: relative;
+            box-shadow: inset 0 10px 10px rgba(0, 0, 0, 0.5);
+            height: 140px;
+            width: 140px;
+        }
+
+        .mole {
+            background-color: #585858; /* Mole color (placeholder) */
+            height: 100px; 
+            width: 100px;
+            border-radius: 50%;
+            margin: 20px auto 0;
+            position: absolute;
+            bottom: -140px; /* Starts completely below the hole (hidden) */
+            left: 20px;
+            transition: all 0.2s ease-in-out; /* Smooth transition for popping */
+            cursor: pointer; 
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .hole.up .mole {
+            /* Moves the mole up into the visible area */
+            bottom: 0; 
+        }
+
+        #start-button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Whac-A-Mole! (Faster Mode)</h1>
+
+    <div class="score-board">
+        <div class="score">Score: <span id="score">0</span></div>
+        <div class="time">Time Left: <span id="time-left">30</span></div>
+    </div>
+
+    <button id="start-button">Start Game</button>
+
+    <div class="game-container">
+        <div class="hole" id="hole-1"><div class="mole"></div></div>
+        <div class="hole" id="hole-2"><div class="mole"></div></div>
+        <div class="hole" id="hole-3"><div class="mole"></div></div>
+        <div class="hole" id="hole-4"><div class="mole"></div></div>
+        <div class="hole" id="hole-5"><div class="mole"></div></div>
+        <div class="hole" id="hole-6"><div class="mole"></div></div>
+        <div class="hole" id="hole-7"><div class="mole"></div></div>
+        <div class="hole" id="hole-8"><div class="mole"></div></div>
+        <div class="hole" id="hole-9"><div class="mole"></div></div>
+    </div>
+
+    <script>
+        // --- DOM Element References ---
+        const scoreDisplay = document.getElementById('score');
+        const timeLeftDisplay = document.getElementById('time-left');
+        const startButton = document.getElementById('start-button');
+        const holes = document.querySelectorAll('.hole');
+        const moles = document.querySelectorAll('.mole');
+
+        // --- Game State Variables ---
+        let score = 0;
+        let timeLeft = 30; // 30 seconds game time
+        let hitHole = null; // Stores the currently visible hole element
+        let timerId = null; // Interval for the main countdown timer
+        let moleTimerId = null; // Interval for making moles appear
+
+        // --- Game Functions ---
+
+        // 1. Get a random hole element
+        function randomHole() {
+            // Remove the 'up' class from the previous hole
+            holes.forEach(hole => {
+                hole.classList.remove('up');
+            });
+
+            // Pick a new random hole
+            const randomIndex = Math.floor(Math.random() * holes.length);
+            const randomHole = holes[randomIndex];
+
+            // Add the 'up' class to make the mole appear
+            randomHole.classList.add('up');
+            hitHole = randomHole;
+
+            return randomHole;
+        }
+
+        // 2. Make a mole pop up and down randomly (SPEED INCREASED HERE)
+        function moveMole() {
+            // Clear any existing mole timer before starting a new one
+            if (moleTimerId) clearInterval(moleTimerId);
+            
+            // This interval controls how frequently a *new* mole pops up.
+            // Reduced from 1500ms (1.5s) to 750ms (0.75s)
+            const POP_UP_INTERVAL = 750; 
+            
+            moleTimerId = setInterval(() => {
+                randomHole();
+                
+                // Mole maximum stay-up time reduced (e.g., max 1000ms instead of 1500ms)
+                // Mole stays up for a random duration between 300ms and 1000ms
+                let randomTime = Math.random() * 700 + 300; 
+                
+                // Use setTimeout to bring the mole down after a random time
+                setTimeout(() => {
+                    // Check if the game is still running before hiding the mole
+                    if (timerId !== null) {
+                         holes.forEach(hole => {
+                            hole.classList.remove('up');
+                        });
+                    }
+                }, randomTime);
+                
+            }, POP_UP_INTERVAL); // Uses the faster POP_UP_INTERVAL
+        }
+
+
+        // 3. Handle a player clicking (whacking) a mole (Unchanged)
+        moles.forEach(mole => {
+            mole.addEventListener('click', () => {
+                // Check if the clicked mole is currently 'up' AND if it hasn't been hit yet (by checking if hitHole matches)
+                if (mole.parentElement.classList.contains('up') && mole.parentElement === hitHole) {
+                    score++;
+                    scoreDisplay.textContent = score;
+                    
+                    // Immediately hide the mole after a hit
+                    mole.parentElement.classList.remove('up');
+                    
+                    // Set hitHole to null to prevent scoring multiple times on the same mole
+                    hitHole = null; 
+                }
+            });
+        });
+
+        // 4. Countdown timer for the game (Unchanged)
+        function countDown() {
+            timeLeft--;
+            timeLeftDisplay.textContent = timeLeft;
+
+            if (timeLeft === 0) {
+                // Stop both intervals
+                clearInterval(timerId);
+                clearInterval(moleTimerId);
+                timerId = null; 
+                moleTimerId = null;
+                
+                // End game message
+                alert(`GAME OVER! Your final score is ${score}`);
+                
+                // Reset the game board and state
+                startButton.textContent = "Play Again";
+                startButton.disabled = false;
+                holes.forEach(hole => hole.classList.remove('up'));
+            }
+        }
+
+        // 5. Start the game function (Unchanged)
+        function startGame() {
+            // Reset state variables
+            score = 0;
+            timeLeft = 30;
+            scoreDisplay.textContent = score;
+            timeLeftDisplay.textContent = timeLeft;
+            startButton.disabled = true; // Disable button while game is running
+            startButton.textContent = "Game In Progress...";
+
+            // Clear any existing timers just in case
+            clearInterval(timerId);
+            clearInterval(moleTimerId);
+
+            // Start the main countdown and the mole movement
+            timerId = setInterval(countDown, 1000); // 1000ms = 1 second
+            moveMole();
+        }
+
+        // --- Event Listener to Start the Game ---
+        startButton.addEventListener('click', startGame);
+
+    </script>
+</body>
+</html>
